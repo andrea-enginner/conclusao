@@ -1,0 +1,29 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  body {
+    @apply font-sans antialiased text-slate-800;
+  }
+}
+
+@layer components {
+  .dashboard-panel {
+    @apply rounded-xl border border-brand-100/80 bg-white shadow-sm;
+  }
+
+  .dashboard-panel-header {
+    @apply border-b border-brand-50 px-5 py-4;
+  }
+
+  .dashboard-panel-body {
+    @apply p-5;
+  }
+}
