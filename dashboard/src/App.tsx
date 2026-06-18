@@ -54,6 +54,11 @@ function clampPct(x: number): number {
     return Math.max(0, Math.min(100, x * 100));
 }
 
+/** Rótulo exibido ao usuário (clusters no JSON começam em 0). */
+function rotuloCluster(clusterId: number): number {
+    return clusterId + 1;
+}
+
 /**
  * Municípios do cluster que cumprem a "meta mínima" em relação ao P25:
  * - indicador "max": valor >= P25 (conforme Pertel / monografia);
@@ -406,7 +411,7 @@ function DashboardShell({
                                         : "bg-brand-50 text-brand-800 hover:bg-brand-100"
                                         }`}
                                 >
-                                    {c}
+                                    {rotuloCluster(c)}
                                 </button>
                             ))}
                         </div>
@@ -583,7 +588,7 @@ export default function App() {
                     title="Municípios no estudo"
                     subtitle={
                         filtroCluster !== "todos"
-                            ? `Filtro ativo: Cluster ${filtroCluster}.`
+                            ? `Filtro ativo: Cluster ${rotuloCluster(filtroCluster)}.`
                             : "Lista dos municípios e o cluster atribuído a cada um."
                     }
                     badge={`${municipiosFiltrados.length} de ${totalMunicipios}`}
@@ -602,7 +607,7 @@ export default function App() {
                                 >
                                     <header className="mb-2 flex items-center justify-between gap-2">
                                         <span className="inline-flex rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-white">
-                                            Cluster {cluster}
+                                            Cluster {rotuloCluster(cluster)}
                                         </span>
                                         <span className="text-xs text-slate-500">
                                             {nomes.length} {nomes.length === 1 ? "município" : "municípios"}
@@ -697,7 +702,7 @@ export default function App() {
                                                 </th>
                                                 {clusters.map((c) => (
                                                     <th key={c} className="min-w-[160px] px-3 py-2 text-center font-semibold">
-                                                        Cluster {c}
+                                                        Cluster {rotuloCluster(c)}
                                                     </th>
                                                 ))}
                                             </tr>
@@ -802,7 +807,7 @@ export default function App() {
                                                         </td>
                                                         <td className="px-4 py-3">
                                                             <span className="inline-flex rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-800 ring-1 ring-brand-100">
-                                                                Cluster {m.cluster}
+                                                                Cluster {rotuloCluster(m.cluster)}
                                                             </span>
                                                         </td>
                                                         {indicadoresSelecionados.map((ind) => {
