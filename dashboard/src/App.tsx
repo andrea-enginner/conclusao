@@ -701,7 +701,7 @@ export default function App() {
                                                     Indicador
                                                 </th>
                                                 {clusters.map((c) => (
-                                                    <th key={c} className="min-w-[160px] px-3 py-2 text-center font-semibold">
+                                                    <th key={c} className="min-w-[160px] px-3 py-2 text-left font-semibold">
                                                         Cluster {rotuloCluster(c)}
                                                     </th>
                                                 ))}
@@ -719,8 +719,8 @@ export default function App() {
                                                     {clusters.map((c) => {
                                                         const cel = linha.porCluster[c];
                                                         return (
-                                                            <td key={c} className="px-3 py-2 align-top text-center">
-                                                                <div className="mx-auto max-w-[220px] space-y-2 text-left">
+                                                            <td key={c} className="px-3 py-2 align-top text-left">
+                                                                <div className="max-w-[220px] space-y-2">
                                                                     <div>
                                                                         <p className="text-[10px] font-medium uppercase tracking-wide text-slate-500">
                                                                             P25 (referência)
