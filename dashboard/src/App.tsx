@@ -265,6 +265,49 @@ function AbasAnalise({
 
 type LinhaComparacaoP25 = { nome: string; valor: number; benchmark: number };
 
+/** Quebra nomes longos em duas linhas por palavra (ex.: Cabo de Santo Agostinho). */
+function quebrarNomeMunicipio(nome: string, maxPorLinha = 16): string[] {
+    if (nome.length <= maxPorLinha) return [nome];
+
+    const linhas: string[] = [];
+    let linhaAtual = "";
+
+    for (const palavra of nome.split(" ")) {
+        const candidato = linhaAtual ? `${linhaAtual} ${palavra}` : palavra;
+        if (candidato.length <= maxPorLinha) {
+            linhaAtual = candidato;
+        } else {
+            if (linhaAtual) linhas.push(linhaAtual);
+            linhaAtual = palavra;
+        }
+    }
+
+    if (linhaAtual) linhas.push(linhaAtual);
+    return linhas.length > 0 ? linhas : [nome];
+}
+
+function TickMunicipio(props: {
+    x?: string | number;
+    y?: string | number;
+    payload?: { value: string };
+}) {
+    const x = Number(props.x ?? 0);
+    const y = Number(props.y ?? 0);
+    const linhas = quebrarNomeMunicipio(props.payload?.value ?? "");
+
+    return (
+        <g transform={`translate(${x},${y})`}>
+            <text textAnchor="end" fill="#64748b" fontSize={10} transform="rotate(-30)">
+                {linhas.map((linha, i) => (
+                    <tspan key={i} x={0} dy={i === 0 ? 0 : 12}>
+                        {linha}
+                    </tspan>
+                ))}
+            </text>
+        </g>
+    );
+}
+
 function GraficoMunicipioVsP25({ linhas }: { linhas: LinhaComparacaoP25[] }) {
     if (linhas.length === 0) {
         return (
@@ -274,20 +317,19 @@ function GraficoMunicipioVsP25({ linhas }: { linhas: LinhaComparacaoP25[] }) {
         );
     }
     return (
-        <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={linhas} margin={{ top: 8, right: 8, left: 4, bottom: 56 }}>
+        <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={linhas} margin={{ top: 8, right: 8, left: 4, bottom: 72 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis
                     dataKey="nome"
-                    angle={-30}
-                    textAnchor="end"
                     interval={0}
-                    height={56}
-                    tick={{ fontSize: 10 }}
+                    height={72}
+                    tickLine={false}
+                    tick={(props) => <TickMunicipio {...props} />}
                 />
                 <YAxis domain={[0, 1]} tick={{ fontSize: 11 }} />
                 <Tooltip />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
                 <Bar dataKey="valor" name="Município" fill="#085c8a" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="benchmark" name="P25" fill="#99cbe3" radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -359,7 +401,7 @@ function DashboardShell({
             <aside className="fixed inset-y-0 left-0 z-40 hidden w-56 flex-col bg-brand lg:flex">
                 <div className="shrink-0 px-5 py-5">
                     <p className="mt-1 text-sm font-bold text-white">Clusterização</p>
-                    <p className="text-xs text-brand-100">Benchmarking municipal</p>
+                    <p className="text-xs text-brand-100"><em className="italic">Benchmarking</em> municipal</p>
                 </div>
                 <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto p-3">
                     {nav.map((item) => (
@@ -386,7 +428,7 @@ function DashboardShell({
                                 Dashboard de Clusterização
                             </h1>
                             <p className="text-xs text-slate-500 sm:text-sm">
-                                Comparativo de indicadores normalizados e benchmarks P25 por cluster
+                                Comparativo de indicadores normalizados e <em className="italic">benchmarks</em> P25 por cluster
                             </p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
@@ -687,7 +729,7 @@ export default function App() {
                         <div role="tabpanel" aria-label="Relatório" className="space-y-8">
                             <div>
                                 <h3 className="mb-1 text-sm font-semibold text-slate-800">
-                                    Benchmarks internos P25
+                                    <em className="italic">Benchmark</em> internos P25
                                 </h3>
                                 <p className="mb-3 text-sm text-slate-600">
                                     Referência <strong>Pertel et al. (2016)</strong>: percentil 25 por cluster como meta
@@ -759,7 +801,7 @@ export default function App() {
                             <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-1">
                                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-3 pt-3">
                                     <h3 className="text-sm font-semibold text-slate-800">
-                                        Indicadores vs benchmark
+                                        Indicadores vs <em className="italic">Benchmark</em>
                                     </h3>
                                     <span className="text-xs text-slate-500">
                                         {municipiosFiltrados.length} registros · {indicadoresSelecionados.length}{" "}
